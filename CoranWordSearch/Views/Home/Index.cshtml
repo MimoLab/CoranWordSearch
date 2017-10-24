@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Recherche..." id="autocomplete">
+            <span class="input-group-btn">
+                <button class="btn btn-secondary" type="button" onclick="getSourates()">OK</button>
+            </span>
+        </div>
+    </div>
+   
+</div>
+
+<div class="row">
+    <div class="col-md-12" id="result">
+
+    </div>
+    <div class="col-md-12" id="souratesList">
+
+    </div>
+</div>
+@section scripts{
+    <script>
+        $('#autocomplete').autocomplete({
+            serviceUrl: '/autocomplete/countries',
+            onSelect: function (suggestion) {
+                alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+            }
+        });
+
+        function getSourates()
+        {
+            var word = $("#autocomplete").val();
+            if (word == undefined || word == "") {
+                return false;
+            }
+
+            $.ajax({
+                url: "/home/GetSourates",
+                data: {
+                    'word': word
+                },
+                success: function (data) {
+                    $("#result").text('Ce mot est utilisé ' + data.VersetWords.length + ' fois dans ' + data.Sourates.length + ' sourates.');
+                    
+                    $("#souratesList").html('');
+                    for (var i = 0; i < data.Sourates.length; i++) {
+                        $("#souratesList").append('<div class="col-md-3">' + data.Sourates[i].Name + '</div>')
+                    }
+                }
+            })
+
+        }
+    </script>
+    }
