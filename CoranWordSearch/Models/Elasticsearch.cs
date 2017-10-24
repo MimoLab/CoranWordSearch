@@ -23,7 +23,7 @@ namespace CoranWordSearch.Models
             var response = elasticClient.Search<VersetWord>(s => s
               .Index(CORAN_INDEX_NAME)
               .Type(VERSETWORD_TYPE_NAME)
-              .Size(2000)
+              .Size(75000)
               //.Sort(tg=>tg.Ascending(t=> t.Name))
               .Query(q => q.QueryString(qs => qs.Query(name + "*"))));
             
@@ -42,7 +42,7 @@ namespace CoranWordSearch.Models
             var response = elasticClient.Search<Verset>(s => s
               .Index(CORAN_INDEX_NAME)
               .Type(VERSET_TYPE_NAME)
-              .Size(2000)
+              .Size(75000)
               //.Sort(tg=>tg.Ascending(t=> t.Name))
               .Query(q => q.Terms(c => c
                             .Field(p => p.VersetId)
@@ -58,7 +58,7 @@ namespace CoranWordSearch.Models
             var responseSourates = elasticClient.Search<Sourate>(s => s
              .Index(CORAN_INDEX_NAME)
              .Type(SOURATE_TYPE_NAME)
-             .Size(200)
+             .Size(75000)
              //.Sort(tg=>tg.Ascending(t=> t.Name))
              .Query(q => q.Terms(c => c
                            .Field(p => p.SourateId)
