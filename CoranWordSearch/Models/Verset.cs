@@ -12,6 +12,7 @@ namespace CoranWordSearch
         public int VersetId { get; set; }
         public int NumVerset { get; set; }
         public int SourateId { get; set; }
+        public string Content { get; set; }
         public Verset()
         {
             VersetWords = new List<VersetWord>();

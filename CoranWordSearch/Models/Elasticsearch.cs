@@ -13,17 +13,23 @@ namespace CoranWordSearch.Models
         const string WORD_TYPE_NAME = "word";
         const string VERSET_TYPE_NAME = "verset";
         const string VERSETWORD_TYPE_NAME = "versetword";
-        public static ConnectionSettings connectionSettings = new ConnectionSettings(new Uri("http://elasticsearchserver.northeurope.cloudapp.azure.com:9200"));
-        public static ElasticClient elasticClient = new ElasticClient(connectionSettings);
+        public Elasticsearch()
+        {
+            connectionSettings = new ConnectionSettings(new Uri("http://coranelk.northeurope.cloudapp.azure.com:9200/"));
+            connectionSettings.DisableDirectStreaming(true);
+            elasticClient = new ElasticClient(connectionSettings);
+        }
+        public ConnectionSettings connectionSettings { get; }
+        public ElasticClient elasticClient { get; }
 
 
-        public static List<VersetWord> GetWords(string name = "")
+        public List<VersetWord> GetWords(string name = "")
         {
             var wordsToReturn = new List<VersetWord>();
             var response = elasticClient.Search<VersetWord>(s => s
               .Index(CORAN_INDEX_NAME)
               .Type(VERSETWORD_TYPE_NAME)
-              .Size(75000)
+              .Size(10000)
               //.Sort(tg=>tg.Ascending(t=> t.Name))
               .Query(q => q.QueryString(qs => qs.Query(name + "*"))));
             
@@ -35,14 +41,37 @@ namespace CoranWordSearch.Models
             return wordsToReturn;
         }
 
-        public static List<Sourate> GetSourates(List<VersetWord> versetWords)
+        public List<Verset> GetVersets(string word)
         {
             var sourates = new List<Sourate>();
             var versets = new List<Verset>();
             var response = elasticClient.Search<Verset>(s => s
               .Index(CORAN_INDEX_NAME)
               .Type(VERSET_TYPE_NAME)
-              .Size(75000)
+              .Size(10000)
+              //.Sort(tg=>tg.Ascending(t=> t.Name))
+              .Query(q => q.QueryString(qs => qs.Query(word + "*"))));
+            ;
+
+            foreach (var hit in response.Hits)
+            {
+                
+
+                    versets.Add(new Verset { VersetId = hit.Source.VersetId, SourateId = hit.Source.SourateId, Content = hit.Source.Content, NumVerset = hit.Source.NumVerset });
+                
+            }
+
+            return versets;
+        }
+
+        public List<Sourate> GetSourates(List<VersetWord> versetWords)
+        {
+            var sourates = new List<Sourate>();
+            var versets = new List<Verset>();
+            var response = elasticClient.Search<Verset>(s => s
+              .Index(CORAN_INDEX_NAME)
+              .Type(VERSET_TYPE_NAME)
+              .Size(10000)
               //.Sort(tg=>tg.Ascending(t=> t.Name))
               .Query(q => q.Terms(c => c
                             .Field(p => p.VersetId)
@@ -58,7 +87,7 @@ namespace CoranWordSearch.Models
             var responseSourates = elasticClient.Search<Sourate>(s => s
              .Index(CORAN_INDEX_NAME)
              .Type(SOURATE_TYPE_NAME)
-             .Size(75000)
+             .Size(10000)
              //.Sort(tg=>tg.Ascending(t=> t.Name))
              .Query(q => q.Terms(c => c
                            .Field(p => p.SourateId)

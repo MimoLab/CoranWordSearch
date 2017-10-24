@@ -27,13 +27,7 @@
 </div>
 @section scripts{
     <script>
-        $('#autocomplete').autocomplete({
-            serviceUrl: '/autocomplete/countries',
-            onSelect: function (suggestion) {
-                alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
-            }
-        });
-
+        
         function getSourates()
         {
             var word = $("#autocomplete").val();
@@ -51,7 +45,10 @@
                     
                     $("#souratesList").html('');
                     for (var i = 0; i < data.Sourates.length; i++) {
-                        $("#souratesList").append('<div class="col-md-3">' + data.Sourates[i].Name + '</div>')
+                        $("#souratesList").append('<div class="col-md-12" id="sourate' + data.Sourates[i].SourateId + '"><b>' + data.Sourates[i].Name + '</b></div>')
+                        for (var j = 0; j < data.Sourates[i].Versets.length; j++) {
+                            $("#sourate" + data.Sourates[i].SourateId).append('<div class="col-md-12"> Verset ' + data.Sourates[i].Versets[j].NumVerset + ' : ' + data.Sourates[i].Versets[j].Content + '</div>');
+                        }
                     }
                 }
             })

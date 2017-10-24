@@ -8,6 +8,7 @@ namespace CoranWordSearch.Controllers
 {
     public class HomeController : Controller
     {
+        private Models.Elasticsearch elasticSearch = new Models.Elasticsearch();
         public ActionResult Index()
         {
             return View();
@@ -29,15 +30,16 @@ namespace CoranWordSearch.Controllers
 
         public ActionResult GetVersetsWords(string word)
         {
-            var words = Models.Elasticsearch.GetWords(word);
+            var words = elasticSearch.GetWords(word);
             return Json(words, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetSourates(string word)
         {
-            var words = Models.Elasticsearch.GetWords(word);
-            var sourates = Models.Elasticsearch.GetSourates(words);
-            return Json(new { Sourates = sourates, VersetWords = words }, JsonRequestBehavior.AllowGet);
+            var versetWords = elasticSearch.GetWords(word);
+            var versets = elasticSearch.GetVersets(word);
+            var sourates = elasticSearch.GetSourates(versetWords);
+            return Json(new { Sourates = sourates.Select(x=> new Sourate { Versets = versets.Where(v=>v.SourateId == x.SourateId).ToList(), SourateId = x.SourateId, Name = x.Name, VersetsCount = x.VersetsCount}), VersetWords = versetWords, Versets = versets }, JsonRequestBehavior.AllowGet);
         }
     }
 }
