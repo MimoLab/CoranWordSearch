@@ -8,7 +8,7 @@ namespace CoranWordSearch.Models
 {
     public class Elasticsearch
     {
-        const string CORAN_INDEX_NAME = "coran_index";
+        const string CORAN_INDEX_NAME = "coran_index_raw_words";
         const string SOURATE_TYPE_NAME = "sourate";
         const string WORD_TYPE_NAME = "word";
         const string VERSET_TYPE_NAME = "verset";
