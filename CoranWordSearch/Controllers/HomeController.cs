@@ -39,7 +39,7 @@ namespace CoranWordSearch.Controllers
             var versetWords = elasticSearch.GetWords(word);
             var versets = elasticSearch.GetVersets(word);
             var sourates = elasticSearch.GetSourates(versetWords);
-            return Json(new { Sourates = sourates.Select(x=> new Sourate { Versets = versets.Where(v=>v.SourateId == x.SourateId).ToList(), SourateId = x.SourateId, Name = x.Name, VersetsCount = x.VersetsCount}), VersetWords = versetWords, Versets = versets }, JsonRequestBehavior.AllowGet);
+            return Json(new { Sourates = sourates.OrderBy(x=>x.SourateId).Select(x=> new Sourate { Versets = versets.OrderBy(v => v.VersetId).Where(v=>v.SourateId == x.SourateId).ToList(), SourateId = x.SourateId, Name = x.Name, VersetsCount = x.VersetsCount}).Where(t=>t.Versets.Count()>0), VersetWords = versetWords, Versets = versets}, JsonRequestBehavior.AllowGet);
         }
     }
 }
