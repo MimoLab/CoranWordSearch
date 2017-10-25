@@ -31,7 +31,7 @@ namespace CoranWordSearch.Models
               .Type(VERSETWORD_TYPE_NAME)
               .Size(10000)
               //.Sort(tg=>tg.Ascending(t=> t.Name))
-              .Query(q => q.QueryString(qs => qs.Query(name + "*"))));
+              .Query(q => q.QueryString(qs => qs.Query("*" + name + "*"))));
             
             foreach (var hit in response.Hits)
             {
@@ -50,7 +50,7 @@ namespace CoranWordSearch.Models
               .Type(VERSET_TYPE_NAME)
               .Size(10000)
               //.Sort(tg=>tg.Ascending(t=> t.Name))
-              .Query(q => q.QueryString(qs => qs.Query(word + "*"))));
+              .Query(q => q.QueryString(qs => qs.Query("*" + word + "*"))));
             ;
 
             foreach (var hit in response.Hits)
